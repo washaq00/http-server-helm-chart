@@ -10,7 +10,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "web-sofixit.serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

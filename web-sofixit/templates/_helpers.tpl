@@ -51,12 +51,9 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Create the name of the service account to use
+Return the propen Storage Class
 */}}
-{{- define "web-sofixit.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "web-sofixit.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+
+{{- define "web-sofixit.storageClass" -}}
+{{- include "common.storage.class" (dict "persistence" .Values.persistence "global" .Values.global) -}}
+{{- end -}}
