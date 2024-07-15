@@ -5,11 +5,23 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "web-sofixit.fullname" . }}
-spec:
-  {{- if .Values.ingress.className }}
-  ingressClassName: {{ .Values.ingress.className }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
   {{- end }}
+
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "web-sofixit.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "web-sofixit.fullname" . }}
+        chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+        release: "{{ .Release.Name }}"
   {{- if .Values.ingress.tls }}
+  ingressClassName: {{ .Values.ingress.className }}
   tls:
     {{- range .Values.ingress.tls }}
     - hosts:
@@ -28,10 +40,15 @@ spec:
         pathType: Prefix
         backend:
           service: 
-            name: svc-web-sofixit
-            port: {{ $svcPort }}
+            name: {{ $fullName }}
+            port:
+              number: {{ $svcPort }}
   {{- end }}
 {{- end }}
+
+
+
+
 
 
 
